@@ -28,7 +28,7 @@ class XenForoBdApiResourceOwner implements ResourceOwnerInterface
     /**
      * Get resource owner id
      *
-     * @return string|null
+     * @return int|null
      */
     public function getId()
     {
@@ -78,7 +78,7 @@ class XenForoBdApiResourceOwner implements ResourceOwnerInterface
     /**
      * Get resource owner user groups
      *
-     * @return bool|null
+     * @return array|null
      */
     public function getUserGroups()
     {

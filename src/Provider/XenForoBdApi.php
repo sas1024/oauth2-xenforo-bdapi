@@ -2,51 +2,24 @@
 
 namespace Sas1024\OAuth2\Client\Provider;
 
-use InvalidArgumentException;
 use League\OAuth2\Client\Provider\AbstractProvider;
 use League\OAuth2\Client\Provider\Exception\IdentityProviderException;
-use League\OAuth2\Client\Provider\ResourceOwnerInterface;
 use League\OAuth2\Client\Token\AccessToken;
 use Psr\Http\Message\ResponseInterface;
 
 class XenForoBdApi extends AbstractProvider
 {
-
     /**
      * @var string
      */
-    private $urlAuthorize;
+    protected $baseUrl;
 
     /**
-     * @var string
+     * @return string
      */
-    private $urlAccessToken;
-
-    /**
-     * @var string
-     */
-    private $urlResourceOwnerDetails;
-
-    /**
-     * @param array $options
-     * @param array $collaborators
-     * @throws \InvalidArgumentException
-     */
-    public function __construct(array $options = [], array $collaborators = [])
+    public function getBaseUrl()
     {
-        $this->assertRequiredOptions($options);
-
-        $possible = $this->getConfigurableOptions();
-        $configured = array_intersect_key($options, array_flip($possible));
-
-        foreach ($configured as $key => $value) {
-            $this->$key = $value;
-        }
-
-        // Remove all options that are only used locally
-        $options = array_diff_key($options, $configured);
-
-        parent::__construct($options, $collaborators);
+        return $this->baseUrl;
     }
 
     /**
@@ -58,7 +31,7 @@ class XenForoBdApi extends AbstractProvider
      */
     public function getBaseAuthorizationUrl()
     {
-        return $this->urlAuthorize;
+        return $this->getBaseUrl() . '/index.php?oauth/authorize';
     }
 
 
@@ -72,7 +45,7 @@ class XenForoBdApi extends AbstractProvider
      */
     public function getBaseAccessTokenUrl(array $params)
     {
-        return $this->urlAccessToken;
+        return $this->getBaseUrl() . '/index.php?oauth/token';
     }
 
 
@@ -84,7 +57,7 @@ class XenForoBdApi extends AbstractProvider
      */
     public function getResourceOwnerDetailsUrl(AccessToken $token)
     {
-        return $this->urlResourceOwnerDetails;
+        return $this->getBaseUrl() . '/index.php?users/me&oauth_token=' . $token->getToken();
     }
 
 
@@ -98,7 +71,7 @@ class XenForoBdApi extends AbstractProvider
      */
     protected function getDefaultScopes()
     {
-        return [];
+        return ['read'];
     }
 
 
@@ -124,58 +97,10 @@ class XenForoBdApi extends AbstractProvider
      *
      * @param  array $response
      * @param  AccessToken $token
-     * @return ResourceOwnerInterface
+     * @return XenForoBdApiResourceOwner
      */
     protected function createResourceOwner(array $response, AccessToken $token)
     {
         return new XenForoBdApiResourceOwner($response);
-    }
-
-    /**
-     * Returns all options that can be configured.
-     *
-     * @return array
-     */
-    protected function getConfigurableOptions()
-    {
-        return array_merge($this->getRequiredOptions(), [
-            'accessTokenMethod',
-            'accessTokenResourceOwnerId',
-            'scopeSeparator',
-            'responseResourceOwnerId',
-            'scopes',
-        ]);
-    }
-
-    /**
-     * Returns all options that are required.
-     *
-     * @return array
-     */
-    protected function getRequiredOptions()
-    {
-        return [
-            'urlAuthorize',
-            'urlAccessToken',
-            'urlResourceOwnerDetails',
-        ];
-    }
-
-    /**
-     * Verifies that all required options have been passed.
-     *
-     * @param  array $options
-     * @return void
-     * @throws InvalidArgumentException
-     */
-    private function assertRequiredOptions(array $options)
-    {
-        $missing = array_diff_key(array_flip($this->getRequiredOptions()), $options);
-
-        if (!empty($missing)) {
-            throw new InvalidArgumentException(
-                'Required options not defined: ' . implode(', ', array_keys($missing))
-            );
-        }
     }
 }

@@ -1,6 +1,6 @@
 {
   "name": "sas1024/oauth2-xenforo-bdapi",
-  "description": "XenForo [bd] Api Client Provider for The PHP League OAuth2-Client",
+  "description": "XenForo [bd] API OAuth2-Server support for the PHP League's OAuth 2.0 Client",
   "minimum-stability": "stable",
   "license": "MIT",
   "authors": [
@@ -23,7 +23,9 @@
     "league/oauth2-client": "^2.0"
   },
   "require-dev": {
-    "phpunit/phpunit": "~4.3"
+    "phpunit/phpunit": "~4.0",
+    "mockery/mockery": "~0.9",
+    "squizlabs/php_codesniffer": "~2.0"
   },
   "autoload": {
     "psr-4": {
@@ -32,7 +34,7 @@
   },
   "autoload-dev": {
     "psr-4": {
-      "Sas1024\\OAuth2\\Client\\Test\\": "test/"
+      "Sas1024\\OAuth2\\Client\\Test\\": "test/src/"
     }
   }
 }
